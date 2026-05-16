@@ -1,6 +1,0 @@
-package com.manareels.dto;
-
-public class RegisterRequest {
-    public String username;
-    public String password;
-}

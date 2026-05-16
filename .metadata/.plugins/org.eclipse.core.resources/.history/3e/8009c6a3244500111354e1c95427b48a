@@ -1,5 +1,0 @@
-package com.manareels.dto;
-
-public class PostRequest {
-
-}
