@@ -1,0 +1,5 @@
+package com.manareels.request;
+
+public class RegisterRequest {
+
+}

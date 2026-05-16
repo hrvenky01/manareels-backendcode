@@ -1,0 +1,42 @@
+package com.manareels.service;
+
+import com.manareels.dto.FeedResponse;
+import com.manareels.model.Post;
+import com.manareels.repository.PostRepository;
+import com.manareels.repository.LikeRepository;
+import com.manareels.repository.CommentRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class FeedService {
+
+    private final PostRepository postRepo;
+    private final LikeRepository likeRepo;
+    private final CommentRepository commentRepo;
+
+    public FeedService(PostRepository postRepo,
+                       LikeRepository likeRepo,
+                       CommentRepository commentRepo) {
+        this.postRepo = postRepo;
+        this.likeRepo = likeRepo;
+        this.commentRepo = commentRepo;
+    }
+
+    public List<FeedResponse> getFeed() {
+
+        List<Post> posts = postRepo.findAllByOrderByCreatedAtDesc();
+
+        return posts.stream().map(post -> new FeedResponse(
+                post.getId(),
+                post.getCaption(),
+                post.getVideoUrl(),
+                post.getUser().getUsername(),
+                likeRepo.countByPostId(post.getId()),
+                commentRepo.countByPostId(post.getId()),
+                post.getCreatedAt()
+        )).collect(Collectors.toList());
+    }
+}

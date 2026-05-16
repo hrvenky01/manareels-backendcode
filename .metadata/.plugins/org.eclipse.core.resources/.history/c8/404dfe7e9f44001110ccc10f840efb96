@@ -1,0 +1,5 @@
+package com.manareels.security;
+
+public class JwtUtil {
+
+}

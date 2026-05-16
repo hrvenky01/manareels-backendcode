@@ -1,0 +1,39 @@
+package com.manareels.config;
+
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.manareels.security.JwtUtil;
+
+import java.io.IOException;
+
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String authHeader = request.getHeader("Authorization");
+
+        String token = null;
+        String email = null;
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+            email = jwtUtil.extractUsername(token);
+        }
+
+        if (token != null && email != null && jwtUtil.validateToken(token, email)) {
+            // valid token → continue
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}

@@ -1,0 +1,36 @@
+package com.manareels.service;
+
+import com.manareels.model.User;
+import com.manareels.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // GET USER (SAFE VERSION)
+    public User getUser(Long userId) {
+
+        Optional<User> userOpt = userRepository.findById(userId);
+
+        if (userOpt.isEmpty()) {
+            throw new RuntimeException("User not found with id: " + userId);
+        }
+
+        User user = userOpt.get();
+
+        // 🔥 SAFE CLEANUP (IMPORTANT)
+        user.setPassword(null); // security
+        return user;
+    }
+
+    // UPLOAD PHOTO (already existing logic)
+    public String uploadProfilePhoto(Long userId, Object file) {
+        return "uploaded";
+    }
+}

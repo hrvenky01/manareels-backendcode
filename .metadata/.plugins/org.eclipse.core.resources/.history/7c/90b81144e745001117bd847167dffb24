@@ -1,0 +1,31 @@
+package com.manareels.controller;
+
+import com.manareels.dto.PostRequest;
+import com.manareels.dto.PostResponse;
+import com.manareels.service.PostService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/posts")
+@CrossOrigin("*")
+public class PostController {
+
+    @Autowired
+    private PostService postService;
+
+    // CREATE POST
+    @PostMapping("/{userId}")
+    public PostResponse createPost(@PathVariable Long userId,
+                                   @RequestBody PostRequest request) {
+        return postService.createPost(userId, request);
+    }
+
+    // GET FEED
+    @GetMapping
+    public List<PostResponse> getAllPosts() {
+        return postService.getAllPosts();
+    }
+}

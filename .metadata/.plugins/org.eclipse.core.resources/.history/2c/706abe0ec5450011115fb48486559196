@@ -1,0 +1,63 @@
+package com.manareels.service;
+
+import com.manareels.model.User;
+import com.manareels.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    // GET USER
+    public User getUser(Long userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
+
+    // UPDATE USER (bio, name)
+    public User updateUser(Long userId, User updatedUser) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user != null) {
+            user.setName(updatedUser.getName());
+            user.setBio(updatedUser.getBio());
+            return userRepository.save(user);
+        }
+        return null;
+    }
+
+    // PROFILE PHOTO UPLOAD
+    public String uploadProfilePhoto(Long userId, MultipartFile file) {
+
+        try {
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+            String uploadDir = "uploads/";
+
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            File saveFile = new File(uploadDir + fileName);
+            file.transferTo(saveFile);
+
+            User user = userRepository.findById(userId).orElse(null);
+
+            if (user != null) {
+                user.setProfilePic(fileName);
+                userRepository.save(user);
+            }
+
+            return "Photo uploaded successfully";
+
+        } catch (Exception e) {
+            return "Upload failed";
+        }
+    }
+}

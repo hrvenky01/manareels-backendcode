@@ -1,0 +1,43 @@
+package com.manareels.controller;
+
+import com.manareels.model.Comment;
+import com.manareels.service.CommentService;
+import com.manareels.util.JwtUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/comments")
+public class CommentController {
+
+    private final CommentService service;
+    private final JwtUtil jwtUtil;
+
+    public CommentController(CommentService service, JwtUtil jwtUtil) {
+        this.service = service;
+        this.jwtUtil = jwtUtil;
+    }
+
+    // ➕ ADD COMMENT
+    @PostMapping("/{postId}")
+    public Comment addComment(@PathVariable Long postId,
+                              @RequestBody Comment comment,
+                              HttpServletRequest request) {
+
+        String token = request.getHeader("Authorization").substring(7);
+        String email = jwtUtil.extractEmail(token);
+
+        comment.setPostId(postId);
+        comment.setUserEmail(email);
+
+        return service.addComment(comment);
+    }
+
+    // 📄 GET COMMENTS
+    @GetMapping("/{postId}")
+    public List<Comment> getComments(@PathVariable Long postId) {
+        return service.getComments(postId);
+    }
+}

@@ -1,0 +1,5 @@
+package com.manareels.config;
+
+public class PasswordConfig {
+
+}
