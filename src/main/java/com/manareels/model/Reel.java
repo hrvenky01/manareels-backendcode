@@ -15,18 +15,22 @@ public class Reel {
 
     private String videoUrl;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // ⭐ ADD THESE TWO (IMPORTANT)
+    /* ---------------- PERFORMANCE FIELDS ---------------- */
+    @Column(name = "like_count")
     private Integer likeCount = 0;
 
+    @Column(name = "comment_count")
     private Integer commentCount = 0;
 
-    @ManyToOne
+    /* ---------------- USER RELATION ---------------- */
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    // Getters & Setters
+    /* ---------------- GETTERS & SETTERS ---------------- */
 
     public Long getId() {
         return id;
@@ -56,16 +60,6 @@ public class Reel {
         this.createdAt = createdAt;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    // ⭐ GETTERS/SETTERS FOR NEW FIELDS
-
     public Integer getLikeCount() {
         return likeCount;
     }
@@ -80,5 +74,13 @@ public class Reel {
 
     public void setCommentCount(Integer commentCount) {
         this.commentCount = commentCount;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

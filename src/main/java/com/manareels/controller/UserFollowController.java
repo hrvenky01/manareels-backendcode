@@ -1,7 +1,7 @@
 package com.manareels.controller;
 
 import com.manareels.service.UserFollowService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -11,34 +11,41 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class UserFollowController {
 
-    @Autowired
-    private UserFollowService followService;
+    private final UserFollowService followService;
 
-    // FOLLOW
+    public UserFollowController(UserFollowService followService) {
+        this.followService = followService;
+    }
+
+    /* ---------------- FOLLOW USER ---------------- */
     @PostMapping("/{userId}/follow")
-    public String followUser(
+    public ResponseEntity<String> followUser(
             @PathVariable Long userId,
             @RequestParam Long currentUserId
     ) {
-        return followService.followUser(currentUserId, userId);
+        return ResponseEntity.ok(
+                followService.followUser(currentUserId, userId)
+        );
     }
 
-    // UNFOLLOW
+    /* ---------------- UNFOLLOW USER ---------------- */
     @DeleteMapping("/{userId}/unfollow")
-    public String unfollowUser(
+    public ResponseEntity<String> unfollowUser(
             @PathVariable Long userId,
             @RequestParam Long currentUserId
     ) {
-        return followService.unfollowUser(currentUserId, userId);
+        return ResponseEntity.ok(
+                followService.unfollowUser(currentUserId, userId)
+        );
     }
 
-    // FOLLOW STATUS
+    /* ---------------- FOLLOW STATUS ---------------- */
     @GetMapping("/{userId}/follow-status")
-    public Map<String, Boolean> isFollowing(
+    public ResponseEntity<Map<String, Boolean>> isFollowing(
             @PathVariable Long userId,
             @RequestParam Long currentUserId
     ) {
         boolean status = followService.isFollowing(currentUserId, userId);
-        return Map.of("isFollowing", status);
+        return ResponseEntity.ok(Map.of("isFollowing", status));
     }
 }

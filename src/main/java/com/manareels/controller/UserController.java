@@ -2,6 +2,7 @@ package com.manareels.controller;
 
 import com.manareels.model.User;
 import com.manareels.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,16 +17,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    // GET USER PROFILE
+    /* ---------------- GET USER PROFILE ---------------- */
     @GetMapping("/{userId}")
-    public User getUser(@PathVariable Long userId) {
-        return userService.getUser(userId);
+    public ResponseEntity<User> getUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getUser(userId));
     }
 
-    // UPLOAD PROFILE PHOTO
+    /* ---------------- UPLOAD PROFILE PHOTO ---------------- */
     @PostMapping("/{userId}/upload-photo")
-    public String uploadPhoto(@PathVariable Long userId,
-                              @RequestParam("file") MultipartFile file) {
-        return userService.uploadProfilePhoto(userId, file);
+    public ResponseEntity<String> uploadPhoto(
+            @PathVariable Long userId,
+            @RequestParam("file") MultipartFile file
+    ) {
+        String result = userService.uploadProfilePhoto(userId, file);
+        return ResponseEntity.ok(result);
     }
 }

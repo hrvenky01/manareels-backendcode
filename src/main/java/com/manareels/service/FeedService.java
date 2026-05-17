@@ -5,10 +5,10 @@ import com.manareels.model.Reel;
 import com.manareels.repository.ReelRepository;
 import com.manareels.repository.LikeRepository;
 import com.manareels.repository.CommentRepository;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FeedService {
@@ -25,11 +25,20 @@ public class FeedService {
         this.commentRepo = commentRepo;
     }
 
-    public List<FeedResponse> getFeed() {
+    /* ---------------- PAGINATED FEED (FIXED) ---------------- */
+    public Page<FeedResponse> getFeed(int page, int size) {
 
-        List<Reel> reels = reelRepo.findAllByOrderByIdDesc();
+        Page<Reel> reels = reelRepo.findAll(
+                PageRequest.of(page, size, Sort.by("createdAt").descending())
+        );
 
-        return reels.stream().map(reel -> new FeedResponse(
+        return reels.map(this::mapToResponse);
+    }
+
+    /* ---------------- MAPPER ---------------- */
+    private FeedResponse mapToResponse(Reel reel) {
+
+        return new FeedResponse(
                 reel.getId(),
                 reel.getCaption(),
                 reel.getVideoUrl(),
@@ -37,6 +46,6 @@ public class FeedService {
                 likeRepo.countByReel(reel),
                 commentRepo.countByReel(reel),
                 reel.getCreatedAt()
-        )).collect(Collectors.toList());
+        );
     }
 }
